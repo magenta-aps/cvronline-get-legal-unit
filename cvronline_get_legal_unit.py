@@ -90,7 +90,15 @@ def parse_response_v2(response):
         raise LookupError("Legalunit not found")
 
 def parse_response_v3(response):
-    pass
+    result = xmltodict.parse(response.text,
+                             process_namespaces=True,
+                             postprocessor=shortkeys)
+    try:
+        # result one extra level down in new service
+        return result["Envelope"]["Body"]["GetLegalUnitResponse"][
+                      "GetLegalUnitResponse"]["LegalUnit"]
+    except LookupError:
+        raise LookupError("Legalunit not found")
 
 
 
